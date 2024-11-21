@@ -1,47 +1,81 @@
 pipeline {
     agent any
-stage('Setup Python Environment') {
+
+    environment {
+        // Define the virtual environment directory
+        VENV_DIR = 'venv'
+    }
+
+    stages {
+        stage('Checkout SCM') {
+            steps {
+                // Checkout code from the repository
+                checkout scm
+            }
+        }
+
+        stage('Setup Python Environment') {
             steps {
                 script {
-                    sh 'python3 -m venv venv'
-                    sh 'source venv/bin/activate'
-                    sh 'pip install -r requirements.txt'
+                    // Install Python 3 and pip if not installed
+                    sh 'python3 --version || sudo apt-get install python3 python3-pip -y'
+                    
+                    // Create a virtual environment in the 'venv' directory
+                    sh 'python3 -m venv ${VENV_DIR}'
+                    
+                    // Activate the virtual environment and install dependencies from requirements.txt
+                    sh '''
+                        source ${VENV_DIR}/bin/activate
+                        pip install --upgrade pip
+                        pip install -r requirements.txt
+                    '''
                 }
             }
         }
-    stages {
-        stage('Checkout') {
-            steps {
-                sh 'python3 --version'
-sh 'pip3 --version'
-            }
-        }
+
         stage('Build') {
             steps {
                 script {
-                    // Example of running shell commands
-                    sh 'echo Installing dependencies...'
-                    sh 'pip3 install -r requirements.txt'
+                    // Build your application here (e.g., run tests, linting, etc.)
+                    echo 'Building the application...'
                 }
             }
         }
+
         stage('Test') {
             steps {
                 script {
-                    // Example of running test commands
-                    sh 'pytest'
+                    // Run your tests (if any)
+                    echo 'Running tests...'
+                    // Example: sh 'pytest'
                 }
             }
         }
+
         stage('Deploy') {
             steps {
                 script {
-                    // Example of deploy commands
-                    sh 'deploy.sh'
+                    // Deploy your application here
+                    echo 'Deploying the application...'
                 }
             }
         }
     }
-}
 
+    post {
+        always {
+            // Clean up the virtual environment after the build
+            echo 'Cleaning up the environment...'
+            sh 'rm -rf ${VENV_DIR}'
+        }
+
+        success {
+            echo 'Pipeline succeeded!'
+        }
+
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
 
