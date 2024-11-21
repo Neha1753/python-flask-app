@@ -16,21 +16,15 @@ pipeline {
 
         stage('Setup Python Environment') {
             steps {
-                script {
-                    // Install Python 3 and pip if not installed
-                    sh 'python3 --version || sudo apt-get install python3 python3-pip -y'
-                    
-                    // Create a virtual environment in the 'venv' directory
-                    sh 'python3 -m venv ${VENV_DIR}'
-                    
-                    // Activate the virtual environment and install dependencies from requirements.txt
-                    sh '''
-                        source ${VENV_DIR}/bin/activate
-                        pip install --upgrade pip
-                        pip install -r requirements.txt
-                    '''
-                }
+        script {
+            try {
+                sh 'python3 --version'
+            } catch (Exception e) {
+                echo 'Python not found, installing Python and pip...'
+                sh 'apt-get update && apt-get install python3 python3-pip -y'
             }
+        }
+    }
         }
 
         stage('Build') {
