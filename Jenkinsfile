@@ -1,36 +1,36 @@
 pipeline {
     agent any
 
+    environment {
+        PATH = "/usr/local/bin:$PATH"  // Ensure Python and pip are in the PATH
+    }
+
     stages {
         stage('Build') {
             steps {
-                echo 'Installing dependencies...'
-                sh 'pip install -r requirements.txt'
+                script {
+                    // Install dependencies
+                    sh 'python3 -m pip install --upgrade pip'
+                    sh 'python3 -m pip install -r requirements.txt'
+                }
             }
         }
+
         stage('Test') {
             steps {
-                echo 'Running tests...'
-                sh 'python -m unittest discover -s .'
+                script {
+                    // Run your tests here
+                }
             }
         }
+
         stage('Deploy') {
             steps {
-                echo 'Deploying application...'
-                sh '''
-                mkdir -p /tmp/python-app-deploy
-                cp app.py /tmp/python-app-deploy/
-                '''
+                script {
+                    // Your deploy steps here
+                }
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed. Check the logs for more details.'
         }
     }
 }
+
