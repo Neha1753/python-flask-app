@@ -1,9 +1,19 @@
 pipeline {
     agent any
+stage('Setup Python Environment') {
+            steps {
+                script {
+                    sh 'python3 -m venv venv'
+                    sh 'source venv/bin/activate'
+                    sh 'pip install -r requirements.txt'
+                }
+            }
+        }
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                sh 'python3 --version'
+sh 'pip3 --version'
             }
         }
         stage('Build') {
@@ -11,7 +21,7 @@ pipeline {
                 script {
                     // Example of running shell commands
                     sh 'echo Installing dependencies...'
-                    sh 'pip install -r requirements.txt'
+                    sh 'pip3 install -r requirements.txt'
                 }
             }
         }
