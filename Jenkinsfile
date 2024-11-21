@@ -1,36 +1,37 @@
 pipeline {
     agent any
-
-    environment {
-        PATH = "/usr/local/bin:$PATH"  // Ensure Python and pip are in the PATH
-    }
-
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
         stage('Build') {
             steps {
                 script {
-                    // Install dependencies
-                    sh 'python3 -m pip install --upgrade pip'
-                    sh 'python3 -m pip install -r requirements.txt'
+                    // Example of running shell commands
+                    sh 'echo Installing dependencies...'
+                    sh 'pip install -r requirements.txt'
                 }
             }
         }
-
         stage('Test') {
             steps {
                 script {
-                    // Run your tests here
+                    // Example of running test commands
+                    sh 'pytest'
                 }
             }
         }
-
         stage('Deploy') {
             steps {
                 script {
-                    // Your deploy steps here
+                    // Example of deploy commands
+                    sh 'deploy.sh'
                 }
             }
         }
     }
 }
+
 
