@@ -18,7 +18,9 @@ pipeline {
             steps {
         script {
             try {
+                withEnv(["PATH+PYTHON=/usr/local/bin"]) {
                 sh 'python3 --version'
+            }
             } catch (Exception e) {
                 echo 'Python not found, installing Python and pip...'
                 sh 'apt-get update && apt-get install python3 python3-pip -y'
